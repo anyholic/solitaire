@@ -129,9 +129,9 @@ public class Solitaire : MonoBehaviour
 
     public void SortDeckIntoTrips()
     {
-        
-        trips = deck.Count / 3;
-        tripsRemainder = deck.Count % 3;
+        int cardNum = 1;
+        trips = deck.Count / cardNum;
+        tripsRemainder = deck.Count % cardNum;
         deckTrips.Clear();
 
         // 덱의 카드를 3장씩 분할하여 deckTrips에 저장
@@ -139,12 +139,12 @@ public class Solitaire : MonoBehaviour
         for(int i=0;i<trips;i++)
         {
             List<string> myTrips = new List<string>();
-            for(int j=0;j<3;j++)
+            for(int j=0;j< cardNum; j++)
             {
                 myTrips.Add(deck[j + modifier]);
             }
             deckTrips.Add(myTrips);
-            modifier += 3;
+            modifier += cardNum;
         }
 
         // 3장 이하로 카드가 남았을때 deckTrips에 저장
