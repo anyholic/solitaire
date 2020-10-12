@@ -200,6 +200,7 @@ public class Solitaire : MonoBehaviour
 
     void RestackTopDeck()
     {
+        deck.Clear();
         // discardPile에 저장된 카드 deck으로 옴기기
         foreach (string card in discardPile)
         {
