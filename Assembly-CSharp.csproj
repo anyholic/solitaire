@@ -63,9 +63,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Solitaire.cs" />
-    <Compile Include="Assets\UpdataSprite.cs" />
-    <Compile Include="Assets\UserInput.cs" />
+    <Compile Include="Assets\Scripts\Selectable.cs" />
+    <Compile Include="Assets\Scripts\Solitaire.cs" />
+    <Compile Include="Assets\Scripts\UpdataSprite.cs" />
+    <Compile Include="Assets\Scripts\UserInput.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>D:/Documents/Desktop/Solitaire/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
