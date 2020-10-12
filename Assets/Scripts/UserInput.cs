@@ -7,6 +7,9 @@ public class UserInput : MonoBehaviour
 {
     public GameObject slot1;  // 첫번째 선택한 카드 데이터
     private Solitaire solitaire;
+    private float timer;
+    private float doubleClickTime = 0.3f;
+    private int clickCount = 0;
 
     void Start()
     {
@@ -16,6 +19,21 @@ public class UserInput : MonoBehaviour
 
     void Update()
     {
+        if(clickCount == 1)
+        {
+            timer += Time.deltaTime;
+        }
+        else if(clickCount == 3)
+        {
+            timer = 0;
+            clickCount = 1;
+        }
+        if(timer > doubleClickTime)
+        {
+            timer = 0;
+            clickCount = 0;
+        }
+
         GetMouseClick();
     }
 
@@ -23,6 +41,8 @@ public class UserInput : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
+            clickCount++;
+
             Vector3 mousePosition = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
             if(hit)
@@ -51,6 +71,7 @@ public class UserInput : MonoBehaviour
     {
         Debug.Log("Click on Deck");
         solitaire.DealFromDeck();
+        slot1 = this.gameObject;
     }
 
     void Card(GameObject selected)
@@ -71,7 +92,17 @@ public class UserInput : MonoBehaviour
             // 차단되지 않은 경우 
             if (!Blocked(selected))
             {
-                slot1 = selected;
+                if(slot1 == selected)  // 같은 카드를 두번 클릭했을때
+                {
+                    if(DoubleClick())
+                    {
+                        AutoStack(selected);
+                    }
+                }
+                else
+                {
+                    slot1 = selected;
+                }
             }
         }
         else
@@ -102,11 +133,15 @@ public class UserInput : MonoBehaviour
 
 
             }
-
-
-            // else if 이미 선택된 카드와 동일한 카드 인 경우
-            // if 시간이 충분히 짧으면 더블 클릭
-            // if 카드가 위로 날아갈 수있는 경우 수행합니다.
+            else if(slot1 == selected) // 같은 카드를 두번 클릭했을때
+            {
+                if(DoubleClick())
+                {
+                    Debug.Log("더블 클릭");
+                    AutoStack(selected);
+                    
+                }
+            }
         }
     }
 
@@ -265,6 +300,85 @@ public class UserInput : MonoBehaviour
             {
                 return true;
             }
+        }
+    }
+
+    bool DoubleClick()
+    {
+        if(timer < doubleClickTime && clickCount == 2)
+        {
+            Debug.Log("Double Click");
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    void AutoStack(GameObject selected)
+    {
+        for(int i=0;i<solitaire.topPos.Length;i++)
+        {
+            Selectable stack = solitaire.topPos[i].GetComponent<Selectable>();
+            if(selected.GetComponent<Selectable>().value == 1)  // 선택한 카드가 Ace일 경우 
+            {
+                if(solitaire.topPos[i].GetComponent<Selectable>().value == 0)  // Top 위치가 비었을 경우
+                {
+                    slot1 = selected;
+                    Stack(stack.gameObject);  //  Ace 카드를 쌓음
+                    break;  // 첫번째 빈 슬롯을 찾았을 경우
+                }
+            }
+            else
+            {
+                if ((solitaire.topPos[i].GetComponent<Selectable>().suit == slot1.GetComponent<Selectable>().suit) && (solitaire.topPos[i].GetComponent<Selectable>().value == slot1.GetComponent<Selectable>().value - 1))
+                {
+                    // 마지막 카드 일경우(자식 카드가 없는 경우)
+                    if (HasNoChildren(slot1))
+                    {
+                        slot1 = selected;
+                        // 탑 슬롯을 찾은 경우 자동 쌓기 실행후 나가기
+                        string lastCardname = stack.suit + stack.value.ToString();
+                        if (stack.value == 1)
+                        {
+                            lastCardname = stack.suit + "A";
+                        }
+                        else if (stack.value == 11)
+                        {
+                            lastCardname = stack.suit + "J";
+                        }
+                        else if (stack.value == 12)
+                        {
+                            lastCardname = stack.suit + "Q";
+                        }
+                        else if (stack.value == 13)
+                        {
+                            lastCardname = stack.suit + "K";
+                        }
+                        GameObject lastCard = GameObject.Find(lastCardname);
+                        Stack(lastCard);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    bool HasNoChildren(GameObject card)
+    {
+        int i = 0;
+        foreach(Transform child in card.transform)
+        {
+            i++;
+        }
+        if(i == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

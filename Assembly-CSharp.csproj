@@ -63,8 +63,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\ScoreKeeper.cs" />
     <Compile Include="Assets\Scripts\Selectable.cs" />
     <Compile Include="Assets\Scripts\Solitaire.cs" />
+    <Compile Include="Assets\Scripts\UIButtons.cs" />
     <Compile Include="Assets\Scripts\UpdataSprite.cs" />
     <Compile Include="Assets\Scripts\UserInput.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
